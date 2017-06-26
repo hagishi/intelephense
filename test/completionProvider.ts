@@ -125,8 +125,10 @@ var closureSrc =
         function fooFn(){}
     }
     $var = new Foo();
-    $fn = function() use ($var){
-        $var->
+    $fn = function($x) use ($var){
+        $var->fooFn();
+        /** @var Foo $x */
+        $x->
     };
 `;
 
@@ -176,9 +178,17 @@ describe('CompletionProvider', () => {
         before(function () {
             completionProvider = setup(closureSrc);
         });
-
-        it('completions', function () {
-            var completions = completionProvider.provideCompletions('test', { line: 6, character: 14 });
+/*
+        it('use var member completions', function () {
+            let completions = completionProvider.provideCompletions('test', { line: 6, character: 14 });
+            //console.log(JSON.stringify(completions, null, 4));
+            assert.equal(completions.items[0].label, 'fooFn');
+            assert.equal(completions.items[0].kind, lsp.CompletionItemKind.Method);
+        });
+*/
+        it('phpdoc hinted param member completions', function () {
+            let completions = completionProvider.provideCompletions('test', { line: 8, character: 12 });
+            //console.log(JSON.stringify(completionProvider.symbolStore.getSymbolTable('test'), null, 4));
             //console.log(JSON.stringify(completions, null, 4));
             assert.equal(completions.items[0].label, 'fooFn');
             assert.equal(completions.items[0].kind, lsp.CompletionItemKind.Method);
